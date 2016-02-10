@@ -1,14 +1,21 @@
 package net.foxdenstudio.sponge.ore;
 
+import net.foxdenstudio.sponge.ore.annotations.DBKeyType;
 import net.foxdenstudio.sponge.ore.annotations.Model;
+import net.foxdenstudio.sponge.ore.annotations.ModelField;
 import net.foxdenstudio.sponge.ore.test.Namespace;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Joshua on 2/10/2016.
@@ -23,7 +30,7 @@ public class MainClass {
         modelFields = new HashMap<>();
         Reflections reflections = new Reflections();
         models = reflections.getTypesAnnotatedWith(Model.class);
-        models.forEach(aClass -> modelFields.put(aClass, Arrays.asList(aClass.getFields())));
+        models.forEach(aClass -> modelFields.put(aClass, Arrays.asList(aClass.getDeclaredFields()).stream().filter(field1 -> field1.isAnnotationPresent(ModelField.class)).collect(Collectors.toList())));
 //        sets.forEach(aClass -> System.out.println(aClass.getName()));
 
 
@@ -33,13 +40,9 @@ public class MainClass {
         });
 
 
-        modelFields.forEach(this::createTableForObject);
+        modelFields.forEach(Utils::createTableForObject);
 
         saveData(new Namespace("TestThingy"));
-    }
-
-    private void createTableForObject(Class<?> aClass, List<Field> fields) {
-
     }
 
     public <T> T saveData(T object) {

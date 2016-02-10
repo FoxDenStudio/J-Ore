@@ -21,4 +21,12 @@ public @interface ModelField {
     boolean autoIncrement() default false;
 
     DBKeyType keyType() default DBKeyType.NULL;
+
+    boolean nullable() default false;
+
+    String linkTo() default "";
+
+    RelationshipType modifyRelType() default RelationshipType.NA;
+
+    RelationshipType deleteRelType() default RelationshipType.NA;
 }

@@ -11,10 +11,10 @@ import net.foxdenstudio.sponge.ore.annotations.ModelField;
 @Model(tableName = "Namespaces")
 public class Namespace {
 
-    @ModelField(fieldType = FieldType.INT, maxLength = 9, columnName = "uid", autoIncrement = true, keyType = DBKeyType.UNIQUE)
+    @ModelField(fieldType = FieldType.INTEGER, maxLength = 10, columnName = "uid", autoIncrement = true)
     public Integer uid;
 
-    @ModelField(fieldType = FieldType.CHARACTER, maxLength = 50, columnName = "name")
+    @ModelField(fieldType = FieldType.CHARACTER, maxLength = 50, columnName = "name", keyType = DBKeyType.UNIQUE)
     public String name;
 
     public Namespace(String name) {
