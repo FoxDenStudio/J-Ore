@@ -9,7 +9,13 @@ import java.lang.annotation.Target;
  * Created by Joshua on 2/10/2016.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Model {
-    String tableName() default "";
+@Target(ElementType.FIELD)
+public @interface ModelField {
+
+    String columnName();
+
+    int maxLength();
+
+    FieldType fieldType();
+
 }

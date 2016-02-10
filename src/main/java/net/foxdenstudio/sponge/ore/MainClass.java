@@ -33,9 +33,7 @@ public class MainClass {
         });
 
 
-        modelFields.forEach((aClass, fields) -> {
-            createTableForObject(aClass, fields);
-        });
+        modelFields.forEach(this::createTableForObject);
 
         saveData(new TestModel("TestThingy"));
     }
