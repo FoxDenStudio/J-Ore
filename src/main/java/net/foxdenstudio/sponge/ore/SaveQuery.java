@@ -37,7 +37,7 @@ public class SaveQuery extends Query {
                     query.append(anno.columnName());
                     query.append(" = ");
                     try {
-                        query.append(o2 == null ? 0 : field2.get(o2));
+                        query.append(o2 == null ? -1 : field2.get(o2));
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
