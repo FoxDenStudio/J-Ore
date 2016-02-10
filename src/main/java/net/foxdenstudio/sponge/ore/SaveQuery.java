@@ -7,9 +7,13 @@ import net.foxdenstudio.sponge.ore.annotations.ModelField;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-public class SaveQuery extends Query {
-    HashMap<Field, Object> data;
-    Class<?> aClass;
+/**
+ * Created by Joshua on 2/10/2016.
+ * Project: J-Ore
+ */
+class SaveQuery extends Query {
+    private final HashMap<Field, Object> data;
+    private final Class<?> aClass;
 
     public SaveQuery(Class<?> aClass) {
         this.aClass = aClass;
@@ -23,15 +27,15 @@ public class SaveQuery extends Query {
     public void save() {
         query.append("begin tran");
         query.append("\n\r");
-        query.append("if exsists (select * from `");
+        query.append("if exists (select * from `");
         query.append(aClass.getAnnotation(Model.class).tableName());
         query.append("` (updlock,serializable) where ");
         final boolean[] done = {false};
         data.forEach((field2, o2) -> {
             if (!done[0]) {
-                ModelField anno = field2.getAnnotation(ModelField.class);
-                if (anno.keyType().equals(DBKeyType.UNIQUE)) {
-                    query.append(anno.columnName());
+                ModelField modelField = field2.getAnnotation(ModelField.class);
+                if (modelField.keyType().equals(DBKeyType.UNIQUE)) {
+                    query.append(modelField.columnName());
                     query.append(" = ");
                     query.append(o2);
                     done[0] = true;

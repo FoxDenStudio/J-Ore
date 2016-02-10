@@ -12,7 +12,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utils {
+/**
+ * Created by Joshua on 2/10/2016.
+ * Project: J-Ore
+ */
+class Utils {
     static void createTableForObject(Class<?> aClass, List<Field> fields) {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -38,7 +42,6 @@ public class Utils {
                             " ON " + model.tableName() + " " +
                             "(" + modelField.columnName() + ");";
                     uniqueIndex.add(uniqueInd);
-//                    uniqueIndex.add(CREATE UNIQUE INDEX User_username_uindex ON User (username););
                 }
 
                 sql.append(generateColumn(modelField));
@@ -55,7 +58,6 @@ public class Utils {
                     constraints.add(constraint);
                 }
             });
-//            CONSTRAINT User_Namespaces_name_fk FOREIGN KEY (username) REFERENCES Namespaces (name)
 
             constraints.forEach(s -> {
                 sql.append(s);
@@ -80,19 +82,18 @@ public class Utils {
         }
     }
 
-    private static String generateColumn(ModelField anno) {
+    private static String generateColumn(ModelField modelField) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(" ");
-        stringBuilder.append(anno.columnName());
+        stringBuilder.append(modelField.columnName());
         stringBuilder.append(" ");
-        stringBuilder.append(anno.fieldType().name());
+        stringBuilder.append(modelField.fieldType().name());
         stringBuilder.append(" ");
-        if (anno.keyType() != DBKeyType.NULL && anno.keyType() != DBKeyType.UNIQUE) {
-            //FIXME: CREATE UNIQUE INDEX User_username_uindex ON User (username); //GOES AT END
-            stringBuilder.append(anno.keyType().text());
+        if (modelField.keyType() != DBKeyType.NULL && modelField.keyType() != DBKeyType.UNIQUE) {
+            stringBuilder.append(modelField.keyType().text());
             stringBuilder.append(" ");
         }
-        if (anno.nullable()) {
+        if (modelField.nullable()) {
             stringBuilder.append("NULL");
             stringBuilder.append(" ");
         } else {
