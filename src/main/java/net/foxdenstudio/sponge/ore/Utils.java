@@ -22,6 +22,7 @@ public class Utils {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:test.sqlite3"); Statement statement = connection.createStatement()) {
             Model classAnno = aClass.getAnnotation(Model.class);
             final StringBuilder sql = new StringBuilder();
@@ -71,7 +72,14 @@ public class Utils {
             System.err.println(sql.toString());
             statement.executeUpdate(sql.toString());
 
-            uniqueIndex.forEach(s -> statement::executeUpdate);
+            uniqueIndex.forEach(s -> {
+                System.out.println("S: " + s);
+                try {
+                    statement.executeUpdate(s);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
         } catch (SQLException e) {
             e.printStackTrace();
         }
