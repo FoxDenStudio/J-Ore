@@ -14,8 +14,11 @@ public @interface ModelField {
 
     String columnName();
 
-    int maxLength();
+    int maxLength() default Integer.MAX_VALUE;
 
     FieldType fieldType();
 
+    boolean autoIncrement() default false;
+
+    DBKeyType keyType() default DBKeyType.NULL;
 }

@@ -1,7 +1,7 @@
 package net.foxdenstudio.sponge.ore;
 
 import net.foxdenstudio.sponge.ore.annotations.Model;
-import net.foxdenstudio.sponge.ore.test.TestModel;
+import net.foxdenstudio.sponge.ore.test.Namespace;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
@@ -35,7 +35,7 @@ public class MainClass {
 
         modelFields.forEach(this::createTableForObject);
 
-        saveData(new TestModel("TestThingy"));
+        saveData(new Namespace("TestThingy"));
     }
 
     private void createTableForObject(Class<?> aClass, List<Field> fields) {
