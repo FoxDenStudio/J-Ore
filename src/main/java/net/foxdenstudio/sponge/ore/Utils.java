@@ -12,9 +12,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Joshua on 2/10/2016.
- */
 public class Utils {
     static void createTableForObject(Class<?> aClass, List<Field> fields) {
         try {
@@ -24,40 +21,38 @@ public class Utils {
         }
 
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:test.sqlite3"); Statement statement = connection.createStatement()) {
-            Model classAnno = aClass.getAnnotation(Model.class);
+            Model model = aClass.getAnnotation(Model.class);
             final StringBuilder sql = new StringBuilder();
             List<String> constraints = new ArrayList<>();
             List<String> uniqueIndex = new ArrayList<>();
             sql.append("CREATE TABLE IF NOT EXISTS ");
-            sql.append(classAnno.tableName());
+            sql.append(model.tableName());
             sql.append(" (");
 
             fields.forEach(field -> {
-                ModelField anno = field.getAnnotation(ModelField.class);
+                ModelField modelField = field.getAnnotation(ModelField.class);
 
-                if (anno.keyType() == DBKeyType.UNIQUE) {
-                    StringBuilder uniqueInd = new StringBuilder();
-                    uniqueInd.append("CREATE UNIQUE INDEX ");
-                    uniqueInd.append(classAnno.tableName()).append("_").append(anno.columnName()).append("_index").append(" ");
-                    uniqueInd.append(" ON ").append(classAnno.tableName()).append(" ");
-                    uniqueInd.append("(").append(anno.columnName()).append(");");
-                    uniqueIndex.add(uniqueInd.toString());
+                if (modelField.keyType() == DBKeyType.UNIQUE) {
+                    String uniqueInd = "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                            model.tableName() + "_" + modelField.columnName() + "_index" + " " +
+                            " ON " + model.tableName() + " " +
+                            "(" + modelField.columnName() + ");";
+                    uniqueIndex.add(uniqueInd);
 //                    uniqueIndex.add(CREATE UNIQUE INDEX User_username_uindex ON User (username););
                 }
 
-                sql.append(generateColumn(anno));
+                sql.append(generateColumn(modelField));
                 sql.append(", ");
 
-                if (!anno.linkTo().equals("")) {
-                    StringBuilder constraint = new StringBuilder();
-                    constraint.append("CONSTRAINT ");
-                    constraint.append(classAnno.tableName()).append("_").append(anno.linkTo().replace('.', '_')).append("_fk").append(" ");
-                    constraint.append("FOREIGN KEY ");
-                    constraint.append("(").append(anno.columnName()).append(") ");
-                    constraint.append("REFERENCES ");
-                    constraint.append(anno.linkTo().split("\\.")[0]).append(" ");
-                    constraint.append("(").append(anno.linkTo().split("\\.")[1]).append(")");
-                    constraints.add(constraint.toString());
+                if (!modelField.linkTo().equals("")) {
+                    String constraint = "CONSTRAINT " +
+                            model.tableName() + "_" + modelField.linkTo().replace('.', '_') + "_fk" + " " +
+                            "FOREIGN KEY " +
+                            "(" + modelField.columnName() + ") " +
+                            "REFERENCES " +
+                            modelField.linkTo().split("\\.")[0] + " " +
+                            "(" + modelField.linkTo().split("\\.")[1] + ")";
+                    constraints.add(constraint);
                 }
             });
 //            CONSTRAINT User_Namespaces_name_fk FOREIGN KEY (username) REFERENCES Namespaces (name)

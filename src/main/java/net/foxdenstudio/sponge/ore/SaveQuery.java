@@ -7,9 +7,6 @@ import net.foxdenstudio.sponge.ore.annotations.ModelField;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-/**
- * Created by Joshua on 2/10/2016.
- */
 public class SaveQuery extends Query {
     HashMap<Field, Object> data;
     Class<?> aClass;
@@ -36,11 +33,7 @@ public class SaveQuery extends Query {
                 if (anno.keyType().equals(DBKeyType.UNIQUE)) {
                     query.append(anno.columnName());
                     query.append(" = ");
-                    try {
-                        query.append((o2 == null || field2.get(o2) == null || field2.get(o2).toString().isEmpty()) ? "NULL" : field2.get(o2).toString());
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    query.append(o2);
                     done[0] = true;
                 }
             }
@@ -61,19 +54,22 @@ public class SaveQuery extends Query {
         query.append("\n\r");
         query.append("\t");
         query.append("INSERT INTO TABLE ");
+        query.append("( ");
         //TODO INSERT DATA
+        data.forEach((field1, o1) -> {
+            ModelField mf = field1.getAnnotation(ModelField.class);
+            if (!(mf.autoIncrement() && o1 == null)) {
+                // TODO do the inserts
+                query.append(o1);
+            }
+        });
+        query.append(" ) ");
         query.append("\n\r");
         query.append("end");
         query.append("\n\r");
         query.append("commit tran");
         query.append("\n\r");
         System.out.println(query);
-        data.forEach((field1, o1) -> {
-            ModelField mf = field1.getAnnotation(ModelField.class);
-            if (!(mf.autoIncrement() && o1 == null)) {
-
-            }
-        });
         data.forEach((field, o) -> System.out.println(field + " | " + o));
     }
 }
